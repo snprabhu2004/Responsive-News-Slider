@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Responsive News Slider</title>
+<meta charset="utf-8" />
+<meta http-equiv="X-UA-Compatible" content="ie=edge,chrome=1" />
+<meta name="viewport" content="maximum-scale=1,minimum-scale=1,initial-scale=1" />
+<style type="text/css">
+  
+  html,body,ul,li{margin:0; padding: 0}
+  body{ font: normal 100%/120% arial}
+  ul,li{ list-style: none;}
+  .news{ position: relative; overflow: hidden; margin:20px; background: #eee }
+  .slide{ position: absolute; padding: 10px; }
+  nav{ clear: both; display: block; height: 30px;}
+  nav li{ float: left; margin-right: 10px}
+  a{ color: #666; display: block; padding: 5px; text-decoration: none; background: #eee}
+  a.active{ color: #f00}
+</style>
+
+</head>
+<body>
+
+  <div class="news">
+  <nav>
+      <ul>
+        <li><a href="javascript:;">01</a></li>
+        <li><a href="javascript:;">02</a></li>
+        <li><a href="javascript:;">03</a></li>
+      </ul>
+    </nav>
+    <section class="slide">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer eu ante tellus. Proin fermentum pretium feugiat. Interdum et malesuada fames ac ante ipsum primis in faucibus. Curabitur ullamcorper, turpis sed imperdiet lacinia, elit nulla facilisis tortor, ac ultricies ligula odio a mi. Duis lobortis tempus orci, nec elementum eros vehicula nec. In id neque at urna consequat aliquet vitae quis mi. </section>
+    <section class="slide">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer eu ante tellus. Proin fermentum pretium feugiat. Interdum et malesuada fames ac ante ipsum primis in faucibus.</section>
+    <section class="slide">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer eu ante tellus. Proin fermentum pretium feugiat. Interdum et malesuada fames ac ante ipsum primis in faucibus. Curabitur ullamcorper, turpis sed imperdiet lacinia, elit nulla facilisis tortor, ac ultricies ligula odio a mi. Duis lobortis tempus orci, nec elementum eros vehicula nec. In id neque at urna consequat aliquet vitae quis mi. In porttitor quis magna in dignissim. Fusce neque enim, iaculis vitae felis a, viverra porttitor est.</section>
+    
+  </div>
+
+  <script type="text/javascript" src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
+<script type="text/javascript">
+(function($) {
+
+  $.fn.simpleSlider = function(params) {
+    params = $.extend({
+      speed: 500
+    }, params);
+
+    return this.each(function() {
+
+      var sliderContainer = $(this);
+      var slides = $(".slide", sliderContainer);
+      var nav = $("nav li", sliderContainer);
+      var itemheight = 0;
+      var curSlide = 0;
+      var prevSlide = 0;
+      var containerWidth = sliderContainer.outerWidth();
+
+      // Setting First Item
+      nav.eq(0).find("a").addClass("active");
+      itemheight = slides.eq(curSlide).outerHeight()+nav.find("a").outerHeight();
+
+      slides
+        .closest("div").css({height: itemheight + "px"})
+        .end()
+        .css({left:sliderContainer.outerWidth()+"px",width:sliderContainer.width()-10+"px"})
+        .eq(curSlide).animate({left: "0px"}, params.speed);
+
+
+      $(window).resize(function() {
+        itemheight = slides.eq(curSlide).outerHeight()+nav.find("a").outerHeight();
+        slides
+          .closest("div").css({height: itemheight + "px"})
+          .end()
+          .css({left:sliderContainer.outerWidth()+"px",width:sliderContainer.width()-10+"px"})
+          .eq(curSlide).css({left: "0px"});
+        containerWidth = sliderContainer.outerWidth();
+      })
+
+      nav.click(function() {
+        prevSlide = curSlide;
+        curSlide = $(this).index();
+        if (curSlide != prevSlide) {
+          nav.eq(prevSlide).find("a").removeClass("active");
+          slides.eq(prevSlide).animate({left: (-containerWidth + "px")}, params.speed, function() {slides.eq(prevSlide).css("left", containerWidth + "px");});
+          itemheight = slides.eq(curSlide).outerHeight();
+          $(this).find("a").addClass("active");
+          slides
+            .closest("div").animate({height: itemheight+nav.find("a").outerHeight() + "px"}, params.speed)
+            .end()
+            .eq(curSlide).animate({left: "0px"}, params.speed);
+        }
+      });
+    });
+    
+  };
+})(jQuery);
+$(".news").simpleSlider();
+</script>
+
+</body>
+</html>
